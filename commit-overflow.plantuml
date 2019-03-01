@@ -1,0 +1,48 @@
+@startuml
+title Neither lost nor duplicates, but tons of commit flooding the network
+control Kafka
+participant Consumer1
+participant Consumer2
+
+activate Consumer1
+Consumer1 -> Kafka: poll()
+
+Kafka -> Consumer1: messages 1..10
+
+Consumer1 -> Consumer1: process 1
+activate Consumer1
+Consumer1 -> Kafka: commit 1
+deactivate Consumer1
+
+Consumer1 -> Consumer1: process 2
+activate Consumer1
+Consumer1 -> Kafka: commit 2
+deactivate Consumer1
+
+Consumer1 -> Consumer1: process 3
+activate Consumer1
+destroy Consumer1
+deactivate Consumer1
+
+
+activate Consumer2
+Consumer2 -> Kafka: poll()
+Kafka -> Consumer2: messages 3..10
+
+Consumer2 -> Consumer2: process 3
+activate Consumer2
+Consumer2 -> Kafka: commit 3
+deactivate Consumer2
+
+Consumer2 -> Consumer2: process 4
+activate Consumer2
+Consumer2 -> Kafka: commit 4
+deactivate Consumer2
+
+... ...
+Consumer2 -> Consumer2: process 10
+activate Consumer2
+Consumer2 -> Kafka: commit 10
+deactivate Consumer2
+
+@enduml
